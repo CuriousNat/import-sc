@@ -29,7 +29,23 @@ def get_match_events(client, match_id, output="db"):
 
 
 def get_competitions(client):
-    print("Placeholder: get_competitions")
+    print(f"Fetching Competitions")
+    competitions = client.get_competitions(params={'matching': 'statsbomb'})
+    os.makedirs("outputs", exist_ok=True)
+    filepath = "outputs/competitions.json"
+    with open(filepath, "w") as f:
+        json.dump(competitions, f, indent=2)
+    print(f"Saved to {filepath}")
+
+
+def get_seasons(client):
+    print(f"Fetching Seasons")
+    seasons = client.get_seasons(params={'matching': 'statsbomb'})
+    os.makedirs("outputs", exist_ok=True)
+    filepath = "outputs/seasons.json"
+    with open(filepath, "w") as f:
+        json.dump(seasons, f, indent=2)
+    print(f"Saved to {filepath}")
 
 
 def get_matches_in_comp_season(client, competition_id, season_id):
@@ -58,6 +74,9 @@ def main():
     # competitions
     subparsers.add_parser("competitions", help="Get all competitions")
 
+    # seasons
+    subparsers.add_parser("seasons", help="Get all seasons")
+
     # matches-in-comp-season
     p_matches = subparsers.add_parser("matches-in-comp-season", help="Get matches in a competition season")
     p_matches.add_argument("competition_id", type=int, help="Competition ID")
@@ -78,6 +97,8 @@ def main():
         get_match_events(client, args.match_id, args.output)
     elif args.command == "competitions":
         get_competitions(client)
+    elif args.command == "seasons":
+        get_seasons(client)
     elif args.command == "matches-in-comp-season":
         get_matches_in_comp_season(client, args.competition_id, args.season_id)
     elif args.command == "teams-in-competition":
